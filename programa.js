@@ -29,7 +29,7 @@ function menu() {
 
     console.log("**SEJA BEM VINDO AO MENU**")
     rl.question("Digite a opção desejada[SOMENTE NUMEROS]\n[1]-Cadastrar Lembrete [2]-Listar Lembretes [3]-Editar Lembretes\n[4]-Marcar Concluído [5]-Excluir Lembretes [0]-Sair\nR:", (input) => {
-        let i = input
+        let i = Number(input)
         switch (i) {
 
             case '1': cadastrarLembrete();
@@ -64,7 +64,6 @@ menu()
 function resquest(solicitacao, tipo, funcao, propriedade) {
     rl.question(`Digite ${solicitacao}: \nR: `, input => {
         const body = funcao(input)
-        console.log(body);
         if (typeof (body) === typeof (tipo)) {
             if (propriedade === 'dataDeConclusao') {
                 let novaData = new Date(body).toLocaleDateString('pt-br')
@@ -99,24 +98,33 @@ function resquestPrioridade(propriedade) {
 function cadastrarLembrete() {
     switch (true) {
         case (arrayCadastro == 0):
-            resquest('o tarefa que deseja cadastrar', objetoCadastro.tarefa, transString, 'tarefa');
+            resquest('o tarefa que deseja cadastrar', '', transString, 'tarefa');
             break;
         case (arrayCadastro == 1):
-            resquest('a data do seu compromisso neste formato mes/dia/ano', objetoCadastro.dataDeConclusao, transData, 'dataDeConclusao');
+            resquest('a data do seu compromisso neste formato mes/dia/ano', new Date, transData, 'dataDeConclusao');
             break;
         case (arrayCadastro == 2):
-            resquest('a o endereço para realizar a tarefa (se existente)', objetoCadastro.endereco, transString, 'endereco');
+            resquest('a o endereço para realizar a tarefa (se existente)', '', transString, 'endereco');
             break;
         case (arrayCadastro == 3):
             resquestPrioridade('prioridade');
             break;
 
         default:
+
+
             objetoCadastro.id = lembretes.length + 1
-            objetoCadastro.status = 'Pendente'
-            lembretes.push(objetoCadastro)
+            objetoCadastro.status = 'Pendente';
+            const teste = JSON.parse(JSON.stringify(objetoCadastro));
+            /* const novoLembrete = {
+                tarefa: objetoCadastro.tarefa,
+
+            } */
+            lembretes.push(teste);
+            arrayCadastro = 0
             console.log(`Usuario Cadastrado com SUCESSO!!`)
             console.log(lembretes)
+
             menu()
     }
 }
