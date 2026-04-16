@@ -1,7 +1,7 @@
 const console = require("console");
+const { type } = require("os");
 const { stringify } = require("querystring");
 const readline = require("readline");
-const { isDate } = require("util/types");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -151,6 +151,8 @@ function listarLembretes() {
 
     lembretes.forEach(lembrete => {
 
+
+        console.log(lembrete.id)
         console.log(lembrete.tarefa)
         console.log(lembrete.dataDeConclusao)
         console.log(lembrete.endereco)
@@ -160,14 +162,113 @@ function listarLembretes() {
 
     })
 
-    rl.question("Deseja sair ou voltar ao menu?\n[1]SAIR [2]MENU", (input) => {
+    rl.question("Deseja sair ou voltar ao menu?\n[1]SAIR [2]MENU\nR:", (input) => {
 
-        switch (input) {
-            case '1': rl.close()
+        let userChose = parseInt(input)
+
+        switch (userChose) {
+            case 1: rl.close()
                 break;
-            case '2': menu()
+            case 2: menu()
                 break;
         }
+    })
+}
+
+function editarLembretes() {
+
+    console.log("Seus lembretes são: ")
+
+    lembretes.forEach(lembrete => {
+
+        console.log(lembrete.tarefa)
+        console.log(lembrete.dataDeConclusao)
+        console.log(lembrete.endereco)
+        console.log(lembrete.prioridade)
+        console.log(lembrete.status)
+        console.log("-------------------")
+
+    })
+
+    rl.question("Digite o código da tarefa que deseja editar\nR: ", (input2) => {
+
+        let editarNum = parseInt(input2)
+        console.log(typeof (editarNum))
+
+        if (isNaN(editarNum)) {
+
+            console.log("Desculpe, você não digitou um número. Tente novamente!")
+            editarLembretes()
+
+
+        }
+        else {
+
+            for (let i = 0; i < lembretes.length; i++) {
+
+                if (i + 1 === editarNum) {
+
+                    editarTarefa(i)
+
+                } else {
+                    console.log("Não entendi, tente novamente.")
+                    editarLembretes()
+                }
+            }
+        }
+
+    })
+
+}
+
+function voltarMenu() {
+
+    rl.question("Deseja editar mais alguma coisa?\n[1]Sim\n[2]Não\nR: ", (input5) => {
+        let entradaUser = parseInt(input5)
+        switch (entradaUser) {
+            case 1: editarTarefa();
+                break;
+            case 2: menu();
+                break;
+        }
+})
+}
+
+function editarTarefa(i) {
+
+    rl.question("Entendi! Qual informação você deseja editar?\n[1]Tarefa\n[2]Data de Conclusão\n[3]Endereço\n[4]Prioridade\nR:", (input3) => {
+
+        if(isNaN(input3)) {
+
+            console.log("Você não digitou uma escolha válida! Tente noavmente!")
+            editarTarefa(i)
+
+        }
+
+        else {
+
+        let editarInfo = parseInt(input3)
+
+        switch (editarInfo) {
+
+            case 1:
+                rl.question("Digite a nova tarefa\nR:", (input4) => {
+                    let novaTarefa = input4.toString()
+                    lembretes[i].tarefa = novaTarefa;
+                    console.log("Tarefa editada com sucesso!")
+                    voltarMenu()
+                })
+
+            case 2: rl.question("Digite a nova data[FORMATO MES/DIA/ANO\nR:", (input6) => {
+                let novaData = new Date(input6).toLocaleDateString("pt-br");
+                lembretes[i].dataDeConclusao = novaData;
+                console.log("Data de conclusão editada com sucesso!")
+                voltarMenu()
+
+            })
+        }
+    }
+
     })
 }
 
