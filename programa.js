@@ -1,3 +1,4 @@
+const console = require("console");
 const { stringify } = require("querystring");
 const readline = require("readline");
 const rl = readline.createInterface({
@@ -6,18 +7,20 @@ const rl = readline.createInterface({
 });
 
 
-const transData = (dados) => new Date(dados).toLocaleDateString('pt-br')
+const transData = (dados) => new Date(dados)
 const transString = (dados) => dados.toString()
 
 const lembretes = [];
+const prioridade = ['baixa', 'média', 'alta']
 
-const arrayCadastro = [];
+let arrayCadastro = 0
 
 let objetoCadastro = {
+    id: 0,
     tarefa: "",
     dataDeConclusao: new Date,
+    endereco: '',
     prioridade: '',
-    Endereco: '',
     status: ''
 };
 
@@ -58,23 +61,63 @@ function menu() {
 
 menu()
 
-function resquest(solicitacao, tipo, funcao) {
+function resquest(solicitacao, tipo, funcao, propriedade) {
     rl.question(`Digite ${solicitacao}: \nR: `, input => {
         const body = funcao(input)
         console.log(body);
         if (typeof (body) === typeof (tipo)) {
-            arrayCadastro.push(body)
+            if (propriedade === 'dataDeConclusao') {
+                let novaData = new Date(body).toLocaleDateString('pt-br')
+                objetoCadastro[propriedade] = novaData
+                arrayCadastro++
+                cadastrarLembrete()
+            } else {
+                objetoCadastro[propriedade] = body
+                arrayCadastro++
+                cadastrarLembrete()
+            }
+        }
+    })
+}
+
+function resquestPrioridade(propriedade) {
+    rl.question(`Selecione o numero referente a prioridade [0] baixa   [1] média   [2] alta\nR: `, input => {
+        const i = parseInt(input)
+        if (isNaN(i) || i > 2 || i < 0) {
+            console.log('Você selecionou uma opção invalida! Tente novamente...');
+            resquestPrioridade()
+        } else {
+            const priori = prioridade[i]
+            objetoCadastro[propriedade] = priori
+            arrayCadastro++
             cadastrarLembrete()
         }
+
     })
 }
 
 function cadastrarLembrete() {
     switch (true) {
-        case (arrayCadastro.length == 0):
-            resquest('o lembrete que deseja cadastrar', '', transString);
-        case (arrayCadastro.length == 1):
-            resquest('a data do seu compromisso neste formato mes/dia/ano', new Date, transData);
+        case (arrayCadastro == 0):
+            resquest('o tarefa que deseja cadastrar', objetoCadastro.tarefa, transString, 'tarefa');
+            break;
+        case (arrayCadastro == 1):
+            resquest('a data do seu compromisso neste formato mes/dia/ano', objetoCadastro.dataDeConclusao, transData, 'dataDeConclusao');
+            break;
+        case (arrayCadastro == 2):
+            resquest('a o endereço para realizar a tarefa (se existente)', objetoCadastro.endereco, transString, 'endereco');
+            break;
+        case (arrayCadastro == 3):
+            resquestPrioridade('prioridade');
+            break;
+
+        default:
+            objetoCadastro.id = lembretes.length + 1
+            objetoCadastro.status = 'Pendente'
+            lembretes.push(objetoCadastro)
+            console.log(`Usuario Cadastrado com SUCESSO!!`)
+            console.log(lembretes)
+            menu()
     }
 }
 
