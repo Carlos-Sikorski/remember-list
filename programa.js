@@ -121,6 +121,32 @@ function cadastrarLembrete() {
     }
 }
 
+function listarLembretes() {
+
+    console.log("Seus lembretes são: ")
+
+    lembretes.forEach(lembrete => {
+
+        console.log(lembrete.tarefa)
+        console.log(lembrete.dataDeConclusao)
+        console.log(lembrete.endereco)
+        console.log(lembrete.prioridade)
+        console.log(lembrete.status)
+        console.log("-------------------")
+
+    })
+
+    rl.question("Deseja sair ou voltar ao menu?\n[1]SAIR [2]MENU", (input) => {
+
+        switch (input) {
+            case '1': rl.close()
+                break;
+            case '2': menu()
+                break;
+        }
+    })
+}
+
 /* console.log('\x1b[43m\x1b[31m%s\x1b[0m', 'Aviso Importante');
 console.log("\u001b[31mEste é um log de ERRO vermelho\u001b[0m");
 console.log("\u001b[32mEste é um log de SUCESSO verde\u001b[0m"); */
