@@ -150,20 +150,16 @@ function listarLembretes() {
     console.log("Seus lembretes são: ")
 
     lembretes.forEach(lembrete => {
-
-
-        console.log(lembrete.id)
-        console.log(lembrete.tarefa)
-        console.log(lembrete.dataDeConclusao)
-        console.log(lembrete.endereco)
-        console.log(lembrete.prioridade)
-        console.log(lembrete.status)
-        console.log("-------------------")
-
+        console.log(`\n\nid: ${lembrete.id}`)
+        console.log(`lembrete: ${lembrete.tarefa}`)
+        console.log(`data: ${lembrete.dataDeConclusao}`)
+        console.log(`endereço: ${lembrete.endereco}`)
+        console.log(`prioridade: ${lembrete.prioridade}`)
+        console.log(`status: ${lembrete.status}`)
+        console.log("-------------------\n\n")
     })
 
     rl.question("Deseja sair ou voltar ao menu?\n[1]SAIR [2]MENU\nR:", (input) => {
-
         let userChose = parseInt(input)
 
         switch (userChose) {
