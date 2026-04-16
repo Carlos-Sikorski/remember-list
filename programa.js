@@ -1,6 +1,7 @@
 const console = require("console");
 const { stringify } = require("querystring");
 const readline = require("readline");
+const { isDate } = require("util/types");
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -10,7 +11,15 @@ const rl = readline.createInterface({
 const transData = (dados) => new Date(dados)
 const transString = (dados) => dados.toString()
 
-const lembretes = [];
+const lembretes = [{
+    id: 1,
+    tarefa: "Cortar o Cabelo",
+    dataDeConclusao: '27/04/2026',
+    endereco: 'Rua General Carlos Cavalcanti',
+    prioridade: 'Baixa',
+    status: 'Pendente'
+}];
+
 const prioridade = ['baixa', 'média', 'alta']
 
 let arrayCadastro = 0
@@ -32,23 +41,23 @@ function menu() {
         let i = Number(input)
         switch (i) {
 
-            case '1': cadastrarLembrete();
+            case 1: cadastrarLembrete();
 
                 break;
 
-            case '2': listarLembretes();
+            case 2: listarLembretes();
                 break;
 
-            case '3': editarLembretes();
+            case 3: editarLembretes();
                 break;
 
-            case '4': marcarConcluido();
+            case 4: marcarConcluido();
                 break;
 
-            case '5': excluirLembrete();
+            case 5: excluirLembrete();
                 break;
 
-            case '0': console.log("Até a próxima!")
+            case 0: console.log("Até a próxima!")
                 rl.close()
 
             default: console.log("Não entendi!\nDigite um número válido!")
@@ -64,12 +73,17 @@ menu()
 function resquest(solicitacao, tipo, funcao, propriedade) {
     rl.question(`Digite ${solicitacao}: \nR: `, input => {
         const body = funcao(input)
-        if (typeof (body) === typeof (tipo)) {
+if (typeof (body) === typeof (tipo)) {
             if (propriedade === 'dataDeConclusao') {
-                let novaData = new Date(body).toLocaleDateString('pt-br')
-                objetoCadastro[propriedade] = novaData
-                arrayCadastro++
-                cadastrarLembrete()
+                if(isNaN(body)){
+                    console.log('Data inválida, tente novamente...');
+                    resquest(solicitacao, tipo, funcao, propriedade)
+                } else {
+                    let novaData = new Date(body).toLocaleDateString('pt-br')
+                    objetoCadastro[propriedade] = novaData
+                    arrayCadastro++
+                    cadastrarLembrete()
+                }
             } else {
                 objetoCadastro[propriedade] = body
                 arrayCadastro++
@@ -115,16 +129,18 @@ function cadastrarLembrete() {
 
             objetoCadastro.id = lembretes.length + 1
             objetoCadastro.status = 'Pendente';
-            const teste = JSON.parse(JSON.stringify(objetoCadastro));
-            /* const novoLembrete = {
+            const novoLembrete = {
+                id: objetoCadastro.id,
                 tarefa: objetoCadastro.tarefa,
+                dataDeConclusao: objetoCadastro.dataDeConclusao,
+                endereco: objetoCadastro.endereco,
+                prioridade: objetoCadastro.prioridade,
+                status: objetoCadastro.status
 
-            } */
-            lembretes.push(teste);
+            }
+            lembretes.push(novoLembrete);
             arrayCadastro = 0
             console.log(`Usuario Cadastrado com SUCESSO!!`)
-            console.log(lembretes)
-
             menu()
     }
 }
